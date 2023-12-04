@@ -1,6 +1,5 @@
 const fs = require("fs");
 const path = require("path");
-const { start } = require("repl");
 const INPUT = fs
     .readFileSync(path.resolve(__dirname, "./input.txt"), "utf8")
     .split("\n")
