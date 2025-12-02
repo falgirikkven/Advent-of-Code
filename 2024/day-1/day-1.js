@@ -1,48 +1,50 @@
-const fs = require("fs");
-const path = require("path");
-const INPUT = fs
-    .readFileSync(path.resolve(__dirname, "./input.txt"), "utf8")
-    .split("\n");
+const fs = require("node:fs");
+const path = require("node:path");
+const input = fs
+  .readFileSync(path.resolve(__dirname, "./input"), "utf8")
+  .trim();
 
-const getNumbersArray = (data) => {
-    const regex = /(\d+)\D+(\d+)/;
-    const arr1 = [];
-    const arr2 = [];
-    data.forEach((line) => {
-        const match = line.match(regex);
-        arr1.push(Number(match[1]));
-        arr2.push(Number(match[2]));
-    });
-    arr1.sort((a, b) => a - b);
-    arr2.sort((a, b) => a - b);
-    return [arr1, arr2];
+const getLists = (data) => {
+  const regex = /(\d+)/g;
+  return data.split("\n").reduce(
+    (acc, line) => {
+      const match = line.match(regex);
+      acc[0].push(Number(match[0]));
+      acc[1].push(Number(match[1]));
+      return acc;
+    },
+    [[], []]
+  );
 };
 
-const [left, right] = getNumbersArray(INPUT);
+const [list1, list2] = getLists(input);
 
-const partOne = () => {
-    let sum = 0;
-    for (let i = 0; i < INPUT.length; i++) {
-        sum += Math.abs(left[i] - right[i]);
-    }
-    return sum;
-};
+function partOne() {
+  // Prevent array mutation
+  const l1 = [...list1].sort();
+  const l2 = [...list2].sort();
 
-const partTwo = () => {
-    let similarity = left.reduce((lacc, lcurr) => {
-        const added = right.reduce((racc, rcurr) => {
-            return racc + (rcurr == lcurr);
-        }, 0);
-        return lacc + lcurr * added;
-    }, 0);
+  let dist = 0;
+  for (let i = 0; i < l1.length; i++) {
+    dist += Math.abs(l2[i] - l1[i]);
+  }
 
-    return similarity;
-};
+  return dist;
+}
 
-// 2815556
+function partTwo() {
+  const numberCount = list2.reduce((acc, curr) => {
+    acc[curr] = (acc[curr] ?? 0) + 1;
+    return acc;
+  }, {});
+
+  return list1.reduce((acc, curr) => acc + curr * (numberCount[curr] ?? 0), 0);
+}
+
 const firstPart = partOne();
 console.log("Part One", firstPart);
+// Expected output: 2815556
 
-// 23927637
-const secondPart = partTwo(INPUT);
+const secondPart = partTwo();
 console.log("Part Two", secondPart);
+// Expected output: 23927637

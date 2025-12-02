@@ -1,81 +1,125 @@
-const fs = require("fs");
-const path = require("path");
-const INPUT = fs
-    .readFileSync(path.resolve(__dirname, "./input.txt"), "utf8")
-    .split("\n")
-    .map((line) => line.trim().split(""));
+const fs = require("node:fs");
+const path = require("node:path");
+const input = fs
+  .readFileSync(path.resolve(__dirname, "./input"), "utf8")
+  .trim();
 
+const xmas = ["X", "M", "A", "S"];
 const directions = [
-    { x: 1, y: 0 },
-    { x: 1, y: 1 },
-    { x: 0, y: 1 },
-    { x: -1, y: 1 },
-    { x: -1, y: 0 },
-    { x: -1, y: -1 },
-    { x: 0, y: -1 },
-    { x: 1, y: -1 },
+  { dx: 1, dy: 0 },
+  { dx: 1, dy: 1 },
+  { dx: 0, dy: 1 },
+  { dx: -1, dy: 1 },
+  { dx: -1, dy: 0 },
+  { dx: -1, dy: -1 },
+  { dx: 0, dy: -1 },
+  { dx: 1, dy: -1 },
 ];
 
-const partOne = (input) => {
-    const word = "XMAS".split("");
-    const rowCount = input.length;
-    const colCount = input[0].length;
-    let count = 0;
-    for (let i = 0; i < rowCount; i++) {
-        for (let j = 0; j < colCount; j++) {
-            if (input[i][j] != word[0]) continue;
-            for (const dir of directions) {
-                let valid = true;
-                let x = j;
-                let y = i;
-                for (let k = 1; k < word.length; k++) {
-                    x += dir.x;
-                    y += dir.y;
-                    if (
-                        !(x >= 0 && x < colCount) ||
-                        !(y >= 0 && y < rowCount) ||
-                        input[y][x] != word[k]
-                    ) {
-                        valid = false;
-                        break;
-                    }
-                }
-                if (valid) {
-                    count += 1;
-                }
-            }
-        }
-    }
-    return count;
+// All possible combination of indices pair that aren't in opposite directions
+const pairDiagonalIndices = [
+  [1, 3],
+  [3, 5],
+  [5, 7],
+  [7, 1],
+];
+
+const processInput = () => {
+  const wordSearch = input.split("\n").map((l) => l.split(""));
+  const maxX = wordSearch[0].length;
+  const maxY = wordSearch.length;
+  return { wordSearch, maxX, maxY };
 };
 
-const partTwo = (input) => {
-    const word = ["MAS", "SAM"];
-    const rowLim = input.length - 2;
-    const colLim = input[0].length - 2;
-    let count = 0;
-    for (let i = 0; i < rowLim; i++) {
-        for (let j = 0; j < colLim; j++) {
-            // The const are named after the numeric keypad (I had no better idea)
-            const char = input[i][j];
-            if (char == "M" || char == "S") {
-                const mid = input[i + 1][j + 1];
+const { wordSearch, maxX, maxY } = processInput();
 
-                const diag1 = `${char}${mid}${input[i + 2][j + 2]}`;
-                const diag2 = `${input[i + 2][j]}${mid}${input[i][j + 2]}`;
-                if (word.includes(diag1) && word.includes(diag2)) {
-                    count += 1;
-                }
-            }
-        }
+function isOutside(x, y) {
+  if (y < 0 || y >= maxY) return true;
+  if (x < 0 || x >= maxX) return true;
+  return false;
+}
+
+function countWord(word, y, x) {
+  if (wordSearch[y][x] !== word[0]) {
+    return 0;
+  }
+
+  let count = 0;
+  for (const direction of directions) {
+    let nx = x;
+    let ny = y;
+    let flag = 1;
+    for (let i = 1; i < word.length; i++) {
+      nx += direction.dx;
+      ny += direction.dy;
+      if (isOutside(nx, ny) || wordSearch[ny][nx] !== word[i]) {
+        flag = 0;
+        break;
+      }
     }
-    return count;
-};
+    count += flag;
+  }
 
-// 2646
-const firstPart = partOne(INPUT);
+  return count;
+}
+
+function partOne() {
+  let count = 0;
+  for (let x = 0; x < maxY; x++) {
+    for (let y = 0; y < maxX; y++) {
+      count += countWord(xmas, y, x);
+    }
+  }
+
+  return count;
+}
+
+function isXmas(y, x) {
+  if (wordSearch[y][x] !== "A") {
+    return 0;
+  }
+
+  let count = 0;
+  for (let i = 0; i < pairDiagonalIndices.length; i++) {
+    const diag1 = directions[pairDiagonalIndices[i][0]];
+    const diag2 = directions[pairDiagonalIndices[i][1]];
+
+    if (
+      wordSearch[y + diag1.dy][x + diag1.dx] != "M" ||
+      wordSearch[y + diag2.dy][x + diag2.dx] != "M"
+    ) {
+      continue;
+    }
+
+    if (
+      wordSearch[y - diag1.dy][x - diag1.dx] != "S" ||
+      wordSearch[y - diag2.dy][x - diag2.dx] != "S"
+    ) {
+      continue;
+    }
+
+    count += 1;
+    break;
+  }
+
+  return count;
+}
+
+function partTwo() {
+  let count = 0;
+  for (let x = 1; x < maxY - 1; x++) {
+    for (let y = 1; y < maxX - 1; y++) {
+      count += isXmas(y, x);
+    }
+  }
+
+  return count;
+}
+
+const firstPart = partOne();
 console.log("Part One", firstPart);
+// Expected output: 2646
 
-// 2000
-const secondPart = partTwo(INPUT);
+const secondPart = partTwo();
 console.log("Part Two", secondPart);
+// Expected output: 2000

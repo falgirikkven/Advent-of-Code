@@ -1,50 +1,50 @@
-const fs = require("fs");
-const path = require("path");
-const INPUT = fs
-    .readFileSync(path.resolve(__dirname, "./input.txt"), "utf8")
-    .split("\n");
+const fs = require("node:fs");
+const path = require("node:path");
+const input = fs
+  .readFileSync(path.resolve(__dirname, "./input"), "utf8")
+  .trim();
 
-const regex = /mul\((\d+),(\d+)\)/g;
-const computeLine = (line) => {
-    const matches = [...line.matchAll(regex)];
-    return matches.reduce((acc, curr) => acc + curr[1] * curr[2], 0);
-};
+const processInput = () => {
+  const regex = /(mul\((\d+),(\d+)\)|do\(\)|don't\(\))/g;
+  const matches = input.matchAll(regex);
+  const mulAll = [];
+  const mulSome = [];
+  let enabled = true;
 
-// one check for the other
-const regexDo = /(.+?)don't\(\)/;
-const regexDoNot = /(.+?)do\(\)/;
-const check = (line, shouldDo = true, acc = 0) => {
-    if (line == null) return acc;
-
-    let reg = regexDoNot;
-    if (shouldDo) reg = regexDo;
-    const match = line.match(reg);
-
-    let sub = null;
-    let compute = line;
-    if (match) {
-        sub = line.substring(match[0].length);
-        compute = match[1];
+  let curr = matches.next();
+  while (!curr.done) {
+    if (curr.value[0] == "don't()") {
+      enabled = false;
+    } else if (curr.value[0] == "do()") {
+      enabled = true;
+    } else {
+      const num1 = parseInt(curr.value[2]);
+      const num2 = parseInt(curr.value[3]);
+      mulAll.push([num1, num2]);
+      if (enabled) {
+        mulSome.push([num1, num2]);
+      }
     }
-    if (shouldDo) {
-        acc += computeLine(compute);
-    }
+    curr = matches.next();
+  }
 
-    return check(sub, !shouldDo, acc);
+  return { mulAll, mulSome };
 };
 
-const partOne = (input) => {
-    return input.reduce((acc, curr) => acc + computeLine(curr), 0);
-};
+const { mulAll, mulSome } = processInput();
 
-const partTwo = (input) => {
-    return check(input.join(""))
-};
+function partOne() {
+  return mulAll.reduce((acc, curr) => acc + curr[0] * curr[1], 0);
+}
 
-// 174960292
-const firstPart = partOne(INPUT);
+function partTwo() {
+  return mulSome.reduce((acc, curr) => acc + curr[0] * curr[1], 0);
+}
+
+const firstPart = partOne();
 console.log("Part One", firstPart);
+// Expected output: 174960292
 
-// 56275602
-const secondPart = partTwo(INPUT);
+const secondPart = partTwo();
 console.log("Part Two", secondPart);
+// Expected output: 56275602
