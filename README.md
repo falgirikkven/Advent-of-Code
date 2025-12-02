@@ -1,2 +1,2 @@
 # Advent of Code
-These are my solutions maded in javascript.
+These are my solutions made in javascript.
