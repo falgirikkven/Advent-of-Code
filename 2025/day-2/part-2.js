@@ -4,14 +4,13 @@ const INPUT = fs
   .readFileSync(path.resolve(__dirname, "./input"), "utf8")
   .trim();
 
-function solve() {
+function main() {
   const ranges = processInput(INPUT);
 
   const allRangesInvalidIds = getAllRangesInvalidIds(ranges);
 
   let result = 0;
   for (const rangeInvalidIds of allRangesInvalidIds) {
-    console.log(rangeInvalidIds);
     result += rangeInvalidIds.reduce((acc, curr) => acc + curr, 0);
   }
 
@@ -152,4 +151,4 @@ function calculateScalar(n, p) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-solve();
+main();

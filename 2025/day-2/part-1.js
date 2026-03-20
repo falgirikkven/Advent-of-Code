@@ -4,7 +4,7 @@ const INPUT = fs
   .readFileSync(path.resolve(__dirname, "./input"), "utf8")
   .trim();
 
-function solve() {
+function main() {
   const ranges = processInput(INPUT);
 
   const allRangesInvalidIds = getAllRangesInvalidIds(ranges);
@@ -122,4 +122,4 @@ function countDigits(integer) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-solve();
+main();

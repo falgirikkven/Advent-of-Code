@@ -4,7 +4,7 @@ const INPUT = fs
   .readFileSync(path.resolve(__dirname, "./input"), "utf8")
   .trim();
 
-function solve() {
+function main() {
   const problems = processInput(INPUT);
 
   const solutions = solveProblems(problems);
@@ -51,4 +51,4 @@ function solveProblems(problems) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-solve();
+main();

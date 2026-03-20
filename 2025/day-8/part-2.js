@@ -4,7 +4,7 @@ const INPUT = fs
   .readFileSync(path.resolve(__dirname, "./input"), "utf8")
   .trim();
 
-function solve() {
+function main() {
   const jbPositions = processInput(INPUT);
 
   const last = connectAllJunctionBoxes(jbPositions);
@@ -84,4 +84,4 @@ function calculateJunctionBoxesDistances(junctionBoxes) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-solve();
+main();

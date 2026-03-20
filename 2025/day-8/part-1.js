@@ -4,12 +4,12 @@ const INPUT = fs
   .readFileSync(path.resolve(__dirname, "./input"), "utf8")
   .trim();
 
-const CONNECTIONS2MAKE = 1000;
+const CONNECTIONS_TO_MAKE = 1000;
 
-function solve() {
+function main() {
   const jbPositions = processInput(INPUT);
 
-  const circuits = connectJunctionBoxes(jbPositions, CONNECTIONS2MAKE);
+  const circuits = connectJunctionBoxes(jbPositions, CONNECTIONS_TO_MAKE);
 
   let result = multiplyLargestSizes(circuits);
 
@@ -33,7 +33,7 @@ function processInput(input) {
   });
 }
 
-function connectJunctionBoxes(junctionBoxes, connections2Make) {
+function connectJunctionBoxes(junctionBoxes, connectionsToMake) {
   const circuits = new Array(junctionBoxes.length);
   const tracker = new Array(junctionBoxes.length);
   for (let i = 0; i < junctionBoxes.length; i++) {
@@ -42,7 +42,7 @@ function connectJunctionBoxes(junctionBoxes, connections2Make) {
   }
   const jbDistances = calculateJunctionBoxesDistances(junctionBoxes);
 
-  for (let i = 0; i < connections2Make; i++) {
+  for (let i = 0; i < connectionsToMake; i++) {
     const dist = jbDistances[i];
     const circuit1 = circuits[tracker[dist.id[0]]];
     const circuit2 = circuits[tracker[dist.id[1]]];
@@ -88,4 +88,4 @@ function multiplyLargestSizes(circuits) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-solve();
+main();

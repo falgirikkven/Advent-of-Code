@@ -6,7 +6,7 @@ const INPUT = fs
 
 const BLANK = " ";
 
-function solve() {
+function main() {
   const problems = processInput(INPUT);
 
   const solutions = solveProblems(problems);
@@ -81,4 +81,4 @@ function solveProblems(problems) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-solve();
+main();
