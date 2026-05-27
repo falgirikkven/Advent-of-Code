@@ -4,10 +4,10 @@ const INPUT = fs
   .readFileSync(path.resolve(__dirname, "./input"), "utf8")
   .trim();
 
-function solve() {
-  const redTilesLocation = processInput(INPUT);
+function main() {
+  const redTiles = processInput(INPUT);
 
-  let result = findLargestRectangleArea(redTilesLocation);
+  let result = findLargestArea(redTiles);
 
   console.log("Part One", result);
   // Expected output: 4771532800
@@ -16,27 +16,43 @@ function solve() {
 ///////////////////////////////////////////////////////////////////////////////
 
 function processInput(input) {
-  return input.split("\n").map((l) => l.split(",").map((n) => parseInt(n)));
+  const redTiles = [];
+
+  const lines = input.split("\n");
+  for (const line of lines) {
+    const raw = line.split(",");
+
+    const row = parseInt(raw.pop());
+    const col = parseInt(raw.pop());
+
+    redTiles.push({ row, col });
+  }
+
+  return redTiles;
 }
 
-function findLargestRectangleArea(tilesLocation) {
-  let maxArea = 0;
-  const len = tilesLocation.length;
+function findLargestArea(redTiles) {
+  let largestArea = 0;
+  const len = redTiles.length;
+
   for (let i = 0; i < len; i++) {
-    const location1 = tilesLocation[i];
+    const tile1 = redTiles[i];
     for (let j = i + 1; j < len; j++) {
-      const location2 = tilesLocation[j];
-      const dr = Math.abs(location1[0] - location2[0]) + 1;
-      const dc = Math.abs(location1[1] - location2[1]) + 1;
+      const tile2 = redTiles[j];
+
+      const dr = Math.abs(tile1.row - tile2.row) + 1;
+      const dc = Math.abs(tile1.col - tile2.col) + 1;
+
       const area = dr * dc;
-      if (area > maxArea) {
-        maxArea = area;
+
+      if (area > largestArea) {
+        largestArea = area;
       }
     }
   }
-  return maxArea;
+  return largestArea;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-solve();
+main();
