@@ -1,9 +1,3 @@
-const fs = require("node:fs");
-const path = require("node:path");
-const INPUT = fs
-  .readFileSync(path.resolve(__dirname, "./input"), "utf8")
-  .trim();
-
 const SPEELS = [
   {
     id: 0,
