@@ -14,7 +14,7 @@ function main() {
   const result1 = Math.max(...raceResults.map((r) => r.distance));
   const result2 = Math.max(...raceResults.map((r) => r.points));
 
-  console.log("Part One", result1); // Expected output: 1256
+  console.log("Part One", result1); // Expected output: 2660
   console.log("Part Two", result2); // Expected output: 1256
 }
 
